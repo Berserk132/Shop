@@ -1,0 +1,10 @@
+<mat-nav-list>
+  <h1 matSubheader class="mt-2">E-Shop</h1>
+  <a mat-list-item routerLink="/shop" routerLinkActive="list-item-active" [routerLinkActiveOptions]={exact:true}>
+    <mat-icon>shop</mat-icon>Shop
+  </a>
+  <a mat-list-item routerLink="/shop/cart" routerLinkActive="list-item-active" [routerLinkActiveOptions]={exact:true}>
+    <span class="badge badge-light">{{GetBasketLength()}}</span>
+    <mat-icon>add_shopping_cart</mat-icon>Cart
+  </a>
+</mat-nav-list>

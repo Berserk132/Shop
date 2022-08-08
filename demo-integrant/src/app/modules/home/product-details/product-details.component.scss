@@ -1,0 +1,57 @@
+#details {
+
+  box-sizing: border-box;
+  margin: 1rem;
+}
+
+.main-details {
+
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+
+
+}
+
+.main-details .price {
+
+  display: block;
+  width: 100%;
+  color: rgb(146, 17, 17);
+}
+
+.main-details .description {
+
+  text-align: center;
+}
+
+
+.main-details img {
+  display: block;
+  width: 50%;
+  max-height: 450px;
+}
+
+.btn-details {
+
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 3%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.number-input {
+  align-self: flex-end;
+  width: 50px;
+
+}
+
+.btn-details button:last-child {
+
+  justify-self: flex-end;
+  width: 10rem;
+}
+
+
+

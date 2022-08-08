@@ -1,0 +1,34 @@
+Button to clear selection
+<!-- AG Grid Angular Component -->
+<!-- <button class="btn btn-primary" (click)="clearSelection()">Clear Selection</button>
+<ag-grid-angular
+  style="width: 100%; height: 100%"
+  class="ag-theme-alpine"
+  [columnDefs]="columnDefs"
+  [defaultColDef]="defaultColDef"
+  [rowData]="products"
+  [rowSelection]="'multiple'"
+  [animateRows]="true"
+  (cellClicked)="onCellClicked($event)"
+></ag-grid-angular> -->
+
+<section id="collections">
+  <div class="d-flex justify-content-between align-items-center m-2">
+    <h2>Shop</h2>
+    <button mat-raised-button (click)="openDialog()">Filter</button>
+  </div>
+  <ul>
+    <li
+      *ngFor="let product of products"
+      style="cursor: pointer"
+      routerLink="{{ product?.Id }}"
+    >
+      <figure class="color2">
+        <img [src]="product?.image" alt="Abstract: grey and green squares." />
+        <figcaption>
+          <a href="#">{{ product?.Name }}</a>
+        </figcaption>
+      </figure>
+    </li>
+  </ul>
+</section>

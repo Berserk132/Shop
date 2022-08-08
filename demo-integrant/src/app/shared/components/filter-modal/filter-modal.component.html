@@ -1,0 +1,10 @@
+<!-- Modal -->
+<div mat-dialog-content>
+  <label for="customRange1">Min( {{data.MinValue}} )</label>
+  <input [value]="0" (change)="MinRange($event)" min="1000" max="10000" type="range" class="custom-range" id="minrange">
+  <label for="customRange1">Max( {{data.MaxValue}} )</label>
+  <input [value]="0" (change)="MaxRange($event)" type="range" class="custom-range" id="maxrange" min="1000" max="10000">
+</div>
+<div class="d-flex justify-content-end" mat-dialog-actions>
+  <button  mat-button [mat-dialog-close]="data" cdkFocusInitial>Filter</button>
+</div>

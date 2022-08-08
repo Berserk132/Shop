@@ -1,0 +1,20 @@
+<section id="details">
+  <h2>{{currentProduct?.Name}}</h2>
+  <figure class="main-details">
+    <img [src]="currentProduct.image" />
+    <p class="price">{{ currentProduct?.Price}}</p>
+    <p class="description">{{currentProduct?.Description}}</p>
+  </figure>
+  <div class="btn-details">
+    <div style="display: flex; gap:5%; flex-basis:70%; justify-content: center; align-items: center; padding: 0;
+    margin: 0;">
+      <button (click)="decrement()" type="button" class="btn btn-danger">-</button>
+      <button (click)="increment()" type="button" class="btn btn-success">+</button>
+      <input #quantity class="number-input" type="number" [value]="this.counter" />
+    </div>
+    <div style="flex-basis: 20%">
+      <button (click)="AddToBasket(quantity)" type="button" class="btn btn-primary">Add To Cart</button>
+    </div>
+  </div>
+
+</section>
