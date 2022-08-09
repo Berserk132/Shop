@@ -1,12 +1,14 @@
 import { HomeService } from '../../../core/services/home.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ColDef, CellClickedEvent } from 'ag-grid-community';
+import { ColDef, CellClickedEvent, GridOptions } from 'ag-grid-community';
 import { AgGridAngular } from 'ag-grid-angular';
 import { IProduct } from 'src/app/shared/models/Product';
 import { Filter } from 'src/app/shared/models/Filter';
 import { FilterModalComponent } from 'src/app/shared/components/filter-modal/filter-modal.component';
-import { AuthenticationService } from 'src/app/core/services/authentication.service';
+import { Observable } from 'rxjs';
+import { ThemePalette } from '@angular/material/core';
+import { GridImageComponent } from 'src/app/shared/components/ag-grid-image/grid-image.component';
 
 
 @Component({
@@ -15,79 +17,83 @@ import { AuthenticationService } from 'src/app/core/services/authentication.serv
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  products: IProduct[] = this.homeService.products;
+  products$: Observable<IProduct[]>
   maxValueFilter: number = 0;
   minValueFilter: number = 0;
+  color: ThemePalette = 'accent';
+  checked = false;
+  disabled = false;
 
 
+  // AG-grid
+  public rowSelection: 'single' | 'multiple' = 'multiple';
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+  api: any;
+  columnApi: any;
 
-
-  // Each Column Definition results in one Column.
-  // public columnDefs: ColDef[] = [
-  //   { field: 'Id', },
-  //   {
-  //     field: 'Name',
-  //     filter: 'agTextColumnFilter',
-  //     filterParams: {
-  //       textMatcher: ({ filter, value, filterText }) => {
-  //         const filterTextLowerCase = filterText.toLowerCase();
-  //         const valueLowerCase = value.toString().toLowerCase();
-  //         console.log(filter)
-  //         console.log(value)
-  //         console.log(filterText)
-  //         switch (filter) {
-  //           case 'contains':
-  //             return valueLowerCase.indexOf(filterTextLowerCase) >= 0;
-  //           case 'notContains':
-  //             return valueLowerCase.indexOf(filterTextLowerCase) === -1;
-  //           case 'equals':
-  //             return valueLowerCase === filterTextLowerCase;
-  //           case 'notEqual':
-  //             return valueLowerCase != filterTextLowerCase;
-  //           case 'startsWith':
-  //             return valueLowerCase.indexOf(filterTextLowerCase) === 0;
-  //           case 'endsWith':
-  //             var index = valueLowerCase.lastIndexOf(filterTextLowerCase);
-  //             return index >= 0 && index === (valueLowerCase.length - filterTextLowerCase.length);
-  //           default:
-  //             // should never happen
-  //             console.warn('invalid filter type ' + filter);
-  //             return false;
-  //         }
-  //       }
-  //     }
-  //   },
-  //   { field: 'Description' },
-  //   { field: 'Price' },
-  //   { field: 'Image' },
-
-  // ]
 
   public columnDefs: ColDef[] = [
-    { field: 'make' },
-    { field: 'model' },
-    { field: 'price' }
+    { field: 'Id', type: 'numberColumn' },
+    { field: 'Name' },
+    { field: 'Description' },
+    { field: 'Price', type: 'numberColumn' },
+    { field: 'image', type: 'imageColumn', cellRenderer: GridImageComponent }
   ];
 
-  public rowData = [
-    { make: "Toyota", model: "Celica", price: 35000 },
-    { make: "Ford", model: "Mondeo", price: 32000 },
-    { make: "Porsche", model: "Boxter", price: 72000 }
-  ];
 
   // DefaultColDef sets props common to all Columns
   public defaultColDef: ColDef = {
     sortable: true,
-    filter: true,
+    // set the default column width
+    width: 150,
+    // make every column editable
+    editable: true,
+    // make every column use 'text' filter by default
+    filter: 'agTextColumnFilter',
+    // enable floating filters by default
+    floatingFilter: true,
+    // make columns resizable
+    resizable: true,
   };
 
-  constructor(private accountService: AuthenticationService, private homeService: HomeService, public dialog: MatDialog) { }
+
+  public columnTypes: {
+    [key: string]: ColDef;
+  } = {
+    numberColumn: { width: 130, filter: 'agNumberColumnFilter' },
+    imageColumn: { width: 75, filter: null, resizable: false},
+
+  };
+
+  gridOptions : GridOptions = {
+    // PROPERTIES
+    // Objects like myRowData and myColDefs would be created in your application
+    columnDefs: this.columnDefs,
+    columnTypes: this.columnTypes,
+    defaultColDef: this.defaultColDef,
+    rowSelection: 'multiple',
+    enableRangeSelection: true,
+    copyGroupHeadersToClipboard: true,
+    rowDragManaged: true,
+    paginationPageSize: 12,
+    
+    pagination: true,
+    // EVENTS
+    // Add event handlers
+    onRowClicked: event => console.log('A row was clicked'),
+    onColumnResized: event => console.log('A column was resized'),
+    onGridReady: event => console.log('The grid is now ready'),
+
+    // CALLBACKS
+    getRowHeight: (params) => 25
+}
+
+
+  constructor(private homeService: HomeService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
 
-    console.log(this.accountService.currentUser)
-    console.log(this.products)
+    this.products$ = this.homeService.products$
   }
 
   openDialog(): void {
@@ -99,11 +105,14 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      this.products = this.homeService.FilterData(this.products, result)
+      this.homeService.FilterData(result)
     });
   }
 
-  // Example load data from sever
+  onGridReady = (params) => {
+    this.api = params.api;
+    this.columnApi = params.columnApi;
+}
 
 
   // Example of consuming Grid Event
@@ -116,4 +125,10 @@ export class HomeComponent implements OnInit {
     this.agGrid.api.deselectAll();
   }
 
+  getFilterStatus() {
+    const model = this.agGrid.api.getFilterModel(); 
+    console.log(model)
+    // Sets the filter model via the grid API
+    this.agGrid.api.setFilterModel(model);
+  }
 }

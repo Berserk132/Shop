@@ -98,4 +98,8 @@ export class LoginComponent implements OnInit {
     this.addresses.push(this.buildAddress());
   }
 
+  resetForm() {
+    this.loginForm.reset();
+  }
+
 }

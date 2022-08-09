@@ -15,8 +15,13 @@ export class ProductDetailsComponent implements OnInit {
   constructor(private homeService: HomeService, private basketService: BasketService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+
     this.route.params.subscribe(params => {
-      this.currentProduct = this.homeService.products.find((item, index) => item.Id == params['id']) as IProduct
+      this.homeService.products$.subscribe({
+        next: products => {
+          this.currentProduct = products?.find((item, index) => item.Id == params['id']) as IProduct
+        }
+      })
     });
   }
 
@@ -36,9 +41,8 @@ export class ProductDetailsComponent implements OnInit {
   AddToBasket(quantityIput: HTMLInputElement) {
     this.route.params.subscribe(params => {
 
-      let product = this.homeService.products.find((item, index) => item.Id == params['id'])
       let quantity = parseInt(quantityIput.value)
-      this.basketService.AddToBasket(product as IProduct, quantity);
+      this.basketService.AddToBasket(this.currentProduct as IProduct, quantity);
     });
   }
 

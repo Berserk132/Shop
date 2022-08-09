@@ -21,12 +21,14 @@ import { OrderTotalsComponent } from './components/order-totals/order-totals.com
 import { FilterModalComponent } from './components/filter-modal/filter-modal.component';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { GridImageComponent } from './components/ag-grid-image/grid-image.component';
 
 @NgModule({
   declarations: [
     BasketSummaryComponent,
     OrderTotalsComponent,
-    FilterModalComponent
+    FilterModalComponent,
+    GridImageComponent
   ],
   imports: [
     RouterModule,
@@ -54,6 +56,7 @@ import { HttpClientModule } from '@angular/common/http';
     BasketSummaryComponent,
     OrderTotalsComponent,
     FilterModalComponent,
+    GridImageComponent
 
   ]
 })

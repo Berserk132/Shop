@@ -1,7 +1,7 @@
 <section id="details">
   <h2>{{currentProduct?.Name}}</h2>
   <figure class="main-details">
-    <img [src]="currentProduct.image" />
+    <img [src]="currentProduct?.image" />
     <p class="price">{{ currentProduct?.Price}}</p>
     <p class="description">{{currentProduct?.Description}}</p>
   </figure>

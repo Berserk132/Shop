@@ -3,24 +3,42 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Filter } from 'src/app/shared/models/Filter';
 import { IProduct } from 'src/app/shared/models/Product';
-import * as data from 'src/app/shared/data/products.json'
+import { BehaviorSubject, map, take } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class HomeService {
-  products: IProduct[] = data['default'];
+  public products = new BehaviorSubject<IProduct[]>(null)
+  public products$ = this.products.asObservable();
 
   constructor(private http: HttpClient) {
-    console.log(this.products)
+    this.getProducts();
   }
 
 
-  FilterData(prods: IProduct[], filterParams: Filter) {
+  FilterData(filterParams: Filter = {MinValue: 0, MaxValue: 10000}) {
 
-    prods = this.products.filter((item, index) => item.Price >= filterParams.MinValue && item.Price <= filterParams.MaxValue)
-    return prods;
+
+    this.products$.pipe(
+      take(1)
+    ).subscribe({
+      next: (products) => {
+          let prods = products.filter((item, index) => item.Price >= filterParams.MinValue && item.Price <= filterParams.MaxValue);
+          this.products.next(prods);
+      }
+    })
   }
 
+
+  getProducts() {
+    
+    console.log('calling API')
+    this.http.get('http://localhost:3000/products')
+      .subscribe((res: IProduct[]) => {
+        this.products.next(res)
+        console.log(res)
+      }) 
+  }
 }
