@@ -23,6 +23,8 @@ export class HomeComponent implements OnInit {
   color: ThemePalette = 'accent';
   checked = false;
   disabled = false;
+  pinnedTopRowData: IProduct[] = [];
+  pinnedBottomRowData:IProduct[] = [];
 
 
   // AG-grid
@@ -76,13 +78,14 @@ export class HomeComponent implements OnInit {
     copyGroupHeadersToClipboard: true,
     rowDragManaged: true,
     paginationPageSize: 12,
-    
+
     pagination: true,
     // EVENTS
     // Add event handlers
     onRowClicked: event => console.log('A row was clicked'),
     onColumnResized: event => console.log('A column was resized'),
     onGridReady: event => console.log('The grid is now ready'),
+    onPaginationChanged: event => this.pinnedRowTopCount(),
 
     // CALLBACKS
     getRowHeight: (params) => 25
@@ -94,6 +97,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
     this.products$ = this.homeService.products$
+    this.pinnedRowTopCount();
   }
 
   openDialog(): void {
@@ -126,9 +130,25 @@ export class HomeComponent implements OnInit {
   }
 
   getFilterStatus() {
-    const model = this.agGrid.api.getFilterModel(); 
+    const model = this.agGrid.api.getFilterModel();
     console.log(model)
     // Sets the filter model via the grid API
     this.agGrid.api.setFilterModel(model);
+  }
+
+
+  pinnedRowTopCount() {
+    this.products$.subscribe({
+
+      next: products => {
+        let start = this.agGrid?.api?.getFirstDisplayedRow();
+        this.pinnedTopRowData = products?.slice(start, start + 2);
+      }
+    })
+  }
+
+  getFirstDisplayedRow() {
+
+    console.log(this.agGrid?.api?.getFirstDisplayedRow())
   }
 }

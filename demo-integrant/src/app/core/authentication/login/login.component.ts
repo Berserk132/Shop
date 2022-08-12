@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators'
 import * as customeValidations from 'src/app/shared/validators/custome.validator';
+import { ValidationEngine } from 'src/app/shared/validators/validation-engine.validator';
 import { AuthenticationService } from '../../services/authentication.service';
 
 
@@ -14,12 +15,13 @@ import { AuthenticationService } from '../../services/authentication.service';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
-  emailMessage: string;
+  errorMessages: string[] = [];
+  isFormSubmited: boolean = false;
 
-  private validationMessages = {
-    required: 'Please enter your email address.',
-    email: 'Please enter a valid email address.'
-  }
+  // private validationMessages = {
+  //   required: 'Please enter your email address.',
+  //   email: 'Please enter a valid email address.'
+  // }
 
   constructor(private router: Router, private accountService: AuthenticationService, private fb: FormBuilder) { }
 
@@ -45,12 +47,12 @@ export class LoginComponent implements OnInit {
     })
 
 
-    const emailControl = this.loginForm.get('emailGroup.email');
-    emailControl?.valueChanges.pipe(
-      debounceTime(1000)
-    ).subscribe({
-      next: (value) => this.setMessage(emailControl)
-    })
+    // const emailControl = this.loginForm.get('emailGroup.email');
+    // emailControl?.valueChanges.pipe(
+    //   debounceTime(1000)
+    // ).subscribe({
+    //   next: (value) => this.setMessage(emailControl)
+    // })
 
   }
 
@@ -64,19 +66,26 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    this.errorMessages = ValidationEngine.extractErrors(this.loginForm.controls)
+    this.isFormSubmited = true;
+    if (ValidationEngine.errorMessage.length > 0) {
+      console.log(this.errorMessages)
+    }
+    else {
 
-    console.log(this.loginForm.get('firstName')?.value + this.loginForm.get('lastName')?.value)
-    this.accountService.login(this.loginForm.get('firstName')?.value + ' ' + this.loginForm.get('lastName')?.value);
-    this.router.navigate(['/shop']);
-  }
-
-  setMessage(c: AbstractControl): void {
-    this.emailMessage = '';
-    if ((c.touched || c.dirty) && c.errors) {
-      this.emailMessage = Object.keys(c.errors).map(
-        key => this.validationMessages[key]).join(' ');
+      console.log(this.loginForm.get('firstName')?.value + this.loginForm.get('lastName')?.value)
+      this.accountService.login(this.loginForm.get('firstName')?.value + ' ' + this.loginForm.get('lastName')?.value);
+      this.router.navigate(['/shop']);
     }
   }
+
+  // setMessage(c: AbstractControl): void {
+  //   this.emailMessage = '';
+  //   if ((c.touched || c.dirty) && c.errors) {
+  //     this.emailMessage = Object.keys(c.errors).map(
+  //       key => this.validationMessages[key]).join(' ');
+  //   }
+  // }
 
   addEmailGroupValidation(c: AbstractControl | null) {
 
@@ -100,6 +109,19 @@ export class LoginComponent implements OnInit {
 
   resetForm() {
     this.loginForm.reset();
+    this.isFormSubmited = false;
+    this.errorMessages = []
+  }
+
+
+  isFieldValid(field: string) {
+    return !this.loginForm.get(field).valid && this.loginForm.get(field).touched && this.isFormSubmited;
+  }
+
+  displayFieldCss(field: string) {
+    return {
+      'is-invalid': this.isFieldValid(field)
+    };
   }
 
 }
