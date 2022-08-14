@@ -10,14 +10,14 @@
       </button>
       <mat-slide-toggle
         class="example-margin"
-        [(ngModel)]="checked"
-        [disabled]="disabled"
+        [checked]="checked$ | async"
+        (change)="toggleChecked()"
       >
         Ag-Grid View
       </mat-slide-toggle>
     </div>
   </div>
-  <ul *ngIf="!checked">
+  <ul *ngIf="!(checked$ | async)">
     <li
       *ngFor="let product of products$ | async"
       style="cursor: pointer"
@@ -33,7 +33,7 @@
   </ul>
 </section>
 
-<div *ngIf="checked" class="h-100">
+<div *ngIf="(checked$ | async)" class="h-100">
   <div class="p-2">
     <button class="btn btn-primary m-2" (click)="clearSelection()">
       Clear Selection
@@ -44,11 +44,33 @@
     <button (click)="getFirstDisplayedRow()" class="btn btn-primary m-2">
       Get Current Row
     </button>
+    <button (click)="sizeToFit()" class="btn btn-primary m-2">
+      Size To Fit
+    </button>
+    <button (click)="sizeColumnToFit()" class="btn btn-primary m-2">
+      Size To Fit (Column)
+    </button>
+    <button (click)="autoSizeAll(false)" class="btn btn-primary m-2">
+      Auto Size All (Skip Header -> False)
+    </button>
+    <button (click)="autoSizeAll(true)" class="btn btn-primary m-2">
+      Auto Size All (Skip Header -> True)
+    </button>
+    <button (click)="setAutoHeight()" class="btn btn-primary m-2">
+      Auto Height
+    </button>
+    <button (click)="setFixedHeight()" class="btn btn-primary m-2">
+      Fixed Height
+    </button>
+    <!-- <button (click)="addFiftyRow()" class="btn btn-primary m-2">
+      Add 50 Row
+    </button> -->
   </div>
 
   <ag-grid-angular
-    style="width: 60%; height: 60%"
+    style="width: 90%; height: 60%"
     class="ag-theme-alpine"
+    id="myGrid"
     [rowData]="products$ | async"
     [animateRows]="true"
     [gridOptions]="gridOptions"

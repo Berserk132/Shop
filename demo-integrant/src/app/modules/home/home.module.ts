@@ -12,19 +12,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
-
-import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { AgGridModule } from 'ag-grid-angular';
 import { HomeComponent } from './home/home.component';
-import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 import { ProductDetailsComponent } from './product-details/product-details.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { SharedModule } from 'src/app/shared/shared.module';
-
+import { StoreModule } from '@ngrx/store';
+import {homeReducer} from './state/home.reducer';
 
 @NgModule({
   declarations: [
@@ -51,7 +47,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
     MatButtonModule,
     MatNativeDateModule,
     MatSlideToggleModule,
-    SharedModule
+    SharedModule,
+    StoreModule.forFeature('home', homeReducer)
   ],
   exports: [
     HomeComponent,

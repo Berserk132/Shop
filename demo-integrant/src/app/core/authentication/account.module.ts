@@ -5,6 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { LoginComponent } from './login/login.component';
 import { AccountRoutingModule } from './authentication-routing.module';
+import { StoreModule } from '@ngrx/store';
+import { authenticationReducer } from './state/authentication.reducer';
 
 
 
@@ -20,6 +22,7 @@ import { AccountRoutingModule } from './authentication-routing.module';
     FormsModule,
     ReactiveFormsModule,
     ModalModule.forRoot(),
+    StoreModule.forFeature('authentication', authenticationReducer),
     MatIconModule,
   ],
 

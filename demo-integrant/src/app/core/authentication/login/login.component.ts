@@ -1,19 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  AbstractControl,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { debounceTime } from 'rxjs/operators'
+import { Store } from '@ngrx/store';
+import { debounceTime } from 'rxjs/operators';
+import { MainState } from 'src/app/configs/state/state';
 import * as customeValidations from 'src/app/shared/validators/custome.validator';
 import { ValidationEngine } from 'src/app/shared/validators/validation-engine.validator';
 import { AuthenticationService } from '../../services/authentication.service';
-
+import * as AuthenticationActions from '../state/authentication.action';
+import { getToggleSendCatalog } from '../state/authentication.reducer';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-
   loginForm: FormGroup;
   errorMessages: string[] = [];
   isFormSubmited: boolean = false;
@@ -23,11 +31,23 @@ export class LoginComponent implements OnInit {
   //   email: 'Please enter a valid email address.'
   // }
 
-  constructor(private router: Router, private accountService: AuthenticationService, private fb: FormBuilder) { }
+  constructor(
+    private router: Router,
+    private accountService: AuthenticationService,
+    private fb: FormBuilder,
+    private store: Store<MainState>
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(3), customeValidations.firstNameNotEqualAhmed]],
+      firstName: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          customeValidations.firstNameNotEqualAhmed,
+        ],
+      ],
       lastName: ['', [Validators.required]],
       emailGroup: this.fb.group({
         email: ['', [Validators.required, Validators.email]],
@@ -37,15 +57,13 @@ export class LoginComponent implements OnInit {
       notification: 'email',
       rating: [null, [customeValidations.ratingRange(1, 5)]],
       sendCatalog: [''],
-      addresses: this.fb.array([this.buildAddress()])
-    })
+      addresses: this.fb.array([this.buildAddress()]),
+    });
 
-    this.addEmailGroupValidation(this.loginForm.get('emailGroup'))
+    this.addEmailGroupValidation(this.loginForm.get('emailGroup'));
     this.loginForm.get('emailGroup')?.valueChanges.subscribe({
-
-      next: () => console.log(this.loginForm)
-    })
-
+      next: () => console.log(this.loginForm),
+    });
 
     // const emailControl = this.loginForm.get('emailGroup.email');
     // emailControl?.valueChanges.pipe(
@@ -54,10 +72,12 @@ export class LoginComponent implements OnInit {
     //   next: (value) => this.setMessage(emailControl)
     // })
 
+    this.store.select(getToggleSendCatalog).subscribe({
+      next: (res) => this.loginForm.get('sendCatalog').setValue(res)
+    });
   }
 
   get LoginForm() {
-
     return this.loginForm.controls;
   }
 
@@ -65,16 +85,27 @@ export class LoginComponent implements OnInit {
     return <FormArray>this.loginForm.get('addresses');
   }
 
+  onSendCatalog() {
+    this.store.dispatch(AuthenticationActions.ToggleSendCatalog());
+  }
+
   onSubmit() {
-    this.errorMessages = ValidationEngine.extractErrors(this.loginForm.controls)
+    this.errorMessages = ValidationEngine.extractErrors(
+      this.loginForm.controls
+    );
     this.isFormSubmited = true;
     if (ValidationEngine.errorMessage.length > 0) {
-      console.log(this.errorMessages)
-    }
-    else {
-
-      console.log(this.loginForm.get('firstName')?.value + this.loginForm.get('lastName')?.value)
-      this.accountService.login(this.loginForm.get('firstName')?.value + ' ' + this.loginForm.get('lastName')?.value);
+      console.log(this.errorMessages);
+    } else {
+      console.log(
+        this.loginForm.get('firstName')?.value +
+          this.loginForm.get('lastName')?.value
+      );
+      this.accountService.login(
+        this.loginForm.get('firstName')?.value +
+          ' ' +
+          this.loginForm.get('lastName')?.value
+      );
       this.router.navigate(['/shop']);
     }
   }
@@ -88,8 +119,7 @@ export class LoginComponent implements OnInit {
   // }
 
   addEmailGroupValidation(c: AbstractControl | null) {
-
-    c?.setValidators(customeValidations.compareEmails)
+    c?.setValidators(customeValidations.compareEmails);
   }
 
   buildAddress(): FormGroup {
@@ -99,7 +129,7 @@ export class LoginComponent implements OnInit {
       street2: '',
       city: '',
       state: '',
-      zip: ''
+      zip: '',
     });
   }
 
@@ -110,18 +140,20 @@ export class LoginComponent implements OnInit {
   resetForm() {
     this.loginForm.reset();
     this.isFormSubmited = false;
-    this.errorMessages = []
+    this.errorMessages = [];
   }
 
-
   isFieldValid(field: string) {
-    return !this.loginForm.get(field).valid && this.loginForm.get(field).touched && this.isFormSubmited;
+    return (
+      !this.loginForm.get(field).valid &&
+      this.loginForm.get(field).touched &&
+      this.isFormSubmited
+    );
   }
 
   displayFieldCss(field: string) {
     return {
-      'is-invalid': this.isFieldValid(field)
+      'is-invalid': this.isFieldValid(field),
     };
   }
-
 }

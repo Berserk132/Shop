@@ -3,26 +3,43 @@
   <span *ngIf="errorMessages.length !== 0" class="bg-danger m-5 pt-4">
     <ol>
       <ng-container *ngFor="let error of errorMessages">
-        <li class="text-light">{{error}}</li>
+        <li class="text-light">{{ error }}</li>
       </ng-container>
     </ol>
     <br />
   </span>
   <div class="card-body">
     <form novalidate (ngSubmit)="onSubmit()" [formGroup]="loginForm">
-      <div class="form-group row mb-2" >
-        <label class="col-md-2 col-form-label" for="firstNameId">First Name</label>
+      <div class="form-group row mb-2">
+        <label class="col-md-2 col-form-label" for="firstNameId"
+          >First Name</label
+        >
         <div class="col-md-8">
-          <input class="form-control" id="firstNameId" type="text" placeholder="First Name (required)"
-            formControlName="firstName" name="firstName" [ngClass]="displayFieldCss('firstName')"/>
+          <input
+            class="form-control"
+            id="firstNameId"
+            type="text"
+            placeholder="First Name (required)"
+            formControlName="firstName"
+            name="firstName"
+            [ngClass]="displayFieldCss('firstName')"
+          />
         </div>
       </div>
 
       <div class="form-group row mb-2">
-        <label class="col-md-2 col-form-label" for="lastNameId">Last Name</label>
+        <label class="col-md-2 col-form-label" for="lastNameId"
+          >Last Name</label
+        >
         <div class="col-md-8">
-          <input class="form-control" id="lastNameId" type="text" placeholder="Last Name (required)"
-            formControlName="lastName" [ngClass]="displayFieldCss('lastName')"/>
+          <input
+            class="form-control"
+            id="lastNameId"
+            type="text"
+            placeholder="Last Name (required)"
+            formControlName="lastName"
+            [ngClass]="displayFieldCss('lastName')"
+          />
         </div>
       </div>
 
@@ -37,15 +54,25 @@
               placeholder="Email (required)"
               formControlName="email"
               name="email"
-              [ngClass]="displayFieldCss('emailGroup.email')" />
+              [ngClass]="displayFieldCss('emailGroup.email')"
+            />
           </div>
         </div>
 
         <div class="form-group row mb-2">
-          <label class="col-md-2 col-form-label" for="confirmEmailId">Confirm Email</label>
+          <label class="col-md-2 col-form-label" for="confirmEmailId"
+            >Confirm Email</label
+          >
           <div class="col-md-8">
-            <input class="form-control" id="confirmEmailId" type="email" placeholder="Confirm Email (required)"
-              formControlName="confirmEmail" name="confirmEmail" [ngClass]="displayFieldCss('emailGroup.confirmEmail')"/>
+            <input
+              class="form-control"
+              id="confirmEmailId"
+              type="email"
+              placeholder="Confirm Email (required)"
+              formControlName="confirmEmail"
+              name="confirmEmail"
+              [ngClass]="displayFieldCss('emailGroup.confirmEmail')"
+            />
           </div>
         </div>
       </div>
@@ -53,7 +80,14 @@
       <div class="form-group row mb-2">
         <label class="col-md-2 col-form-label" for="phoneId">Phone</label>
         <div class="col-md-8">
-          <input class="form-control" id="phoneId" type="tel" placeholder="Phone" formControlName="phone" [ngClass]="displayFieldCss('phone')"/>
+          <input
+            class="form-control"
+            id="phoneId"
+            type="tel"
+            placeholder="Phone"
+            formControlName="phone"
+            [ngClass]="displayFieldCss('phone')"
+          />
         </div>
       </div>
 
@@ -62,12 +96,22 @@
         <div class="col-md-8">
           <div class="form-check form-check-inline">
             <label class="form-check-label">
-              <input class="form-check-input" type="radio" value="email" formControlName="notification" />Email
+              <input
+                class="form-check-input"
+                type="radio"
+                value="email"
+                formControlName="notification"
+              />Email
             </label>
           </div>
           <div class="form-check form-check-inline">
             <label class="form-check-label">
-              <input class="form-check-input" type="radio" value="text" formControlName="notification" />Text
+              <input
+                class="form-check-input"
+                type="radio"
+                value="text"
+                formControlName="notification"
+              />Text
             </label>
           </div>
         </div>
@@ -76,7 +120,13 @@
       <div class="form-group row mb-2">
         <label class="col-md-2 col-form-label" for="ratingId">Rating</label>
         <div class="col-md-8">
-          <input class="form-control" id="ratingId" type="number" formControlName="rating" [ngClass]="displayFieldCss('rating')"/>
+          <input
+            class="form-control"
+            id="ratingId"
+            type="number"
+            formControlName="rating"
+            [ngClass]="displayFieldCss('rating')"
+          />
         </div>
       </div>
 
@@ -84,8 +134,13 @@
         <div class="col-md-8">
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" id="sendCatalogId" type="checkbox" formControlName="sendCatalog" />Send me
-              your catalog
+              <input
+                class="form-check-input"
+                id="sendCatalogId"
+                type="checkbox"
+                (click)="onSendCatalog()"
+                formControlName="sendCatalog"
+              />Send me your catalog
             </label>
           </div>
         </div>
@@ -93,28 +148,46 @@
 
       <div *ngIf="loginForm.get('sendCatalog').value">
         <div formArrayName="addresses">
-          <div [formGroupName]="i" *ngFor="let address of addresses.controls; let i = index">
+          <div
+            [formGroupName]="i"
+            *ngFor="let address of addresses.controls; let i = index"
+          >
             <div class="form-group row mb-2">
               <label class="col-md-2 col-form-label pt-0">Address Type</label>
               <div class="col-md-8">
                 <div class="form-check form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" id="addressType1Id" type="radio" value="home"
-                      formControlName="addressType" />
+                    <input
+                      class="form-check-input"
+                      id="addressType1Id"
+                      type="radio"
+                      value="home"
+                      formControlName="addressType"
+                    />
                     Home
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" id="addressType1Id" type="radio" value="work"
-                      formControlName="addressType" />
+                    <input
+                      class="form-check-input"
+                      id="addressType1Id"
+                      type="radio"
+                      value="work"
+                      formControlName="addressType"
+                    />
                     Work
                   </label>
                 </div>
                 <div class="form-check form-check-inline">
                   <label class="form-check-label">
-                    <input class="form-check-input" id="addressType1Id" type="radio" value="other"
-                      formControlName="addressType" />
+                    <input
+                      class="form-check-input"
+                      id="addressType1Id"
+                      type="radio"
+                      value="other"
+                      formControlName="addressType"
+                    />
                     Other
                   </label>
                 </div>
@@ -122,28 +195,56 @@
             </div>
 
             <div class="form-group row mb-2">
-              <label class="col-md-2 col-form-label" attr.for="{{ 'street1Id' }}">Street Address 1</label>
+              <label
+                class="col-md-2 col-form-label"
+                attr.for="{{ 'street1Id' }}"
+                >Street Address 1</label
+              >
               <div class="col-md-8">
-                <input class="form-control" id="{{ 'street1Id' }}" type="text" placeholder="Street address"
-                  formControlName="street1" />
+                <input
+                  class="form-control"
+                  id="{{ 'street1Id' }}"
+                  type="text"
+                  placeholder="Street address"
+                  formControlName="street1"
+                />
               </div>
             </div>
 
             <div class="form-group row mb-2">
-              <label class="col-md-2 col-form-label" for="street2Id">Street Address 2</label>
+              <label class="col-md-2 col-form-label" for="street2Id"
+                >Street Address 2</label
+              >
               <div class="col-md-8">
-                <input class="form-control" id="street2Id" type="text" placeholder="Street address (second line)"
-                  formControlName="street2" />
+                <input
+                  class="form-control"
+                  id="street2Id"
+                  type="text"
+                  placeholder="Street address (second line)"
+                  formControlName="street2"
+                />
               </div>
             </div>
 
             <div class="form-group row mb-2">
-              <label class="col-md-2 col-form-label" for="cityId">City, State, Zip Code</label>
+              <label class="col-md-2 col-form-label" for="cityId"
+                >City, State, Zip Code</label
+              >
               <div class="col-md-3">
-                <input class="form-control" id="cityId" type="text" placeholder="City" formControlName="city" />
+                <input
+                  class="form-control"
+                  id="cityId"
+                  type="text"
+                  placeholder="City"
+                  formControlName="city"
+                />
               </div>
               <div class="col-md-3">
-                <select class="form-control" id="stateId" formControlName="state">
+                <select
+                  class="form-control"
+                  id="stateId"
+                  formControlName="state"
+                >
                   <option value="" disabled selected hidden>
                     Select a State...
                   </option>
@@ -158,7 +259,13 @@
                 </select>
               </div>
               <div class="col-md-2">
-                <input class="form-control" id="zipId" type="number" placeholder="Zip Code" formControlName="zip" />
+                <input
+                  class="form-control"
+                  id="zipId"
+                  type="number"
+                  placeholder="Zip Code"
+                  formControlName="zip"
+                />
               </div>
             </div>
           </div>
@@ -166,11 +273,17 @@
 
         <div class="form-group row mb-2">
           <div class="col-md-4">
-            <button class="btn btn-outline-primary" type="button" [title]="
+            <button
+              class="btn btn-outline-primary"
+              type="button"
+              [title]="
                 addresses.valid
                   ? 'Add another mailing address'
                   : 'Disabled until the existing address data is valid'
-              " [disabled]="!addresses.valid" (click)="addAddress()">
+              "
+              [disabled]="!addresses.valid"
+              (click)="addAddress()"
+            >
               Add Another Address
             </button>
           </div>
@@ -179,14 +292,22 @@
 
       <div class="form-group row mb-2">
         <div class="offset-md-2 col-md-4">
-          <button class="btn btn-primary mr-3" type="submit" style="width: 80px">
+          <button
+            class="btn btn-primary mr-3"
+            type="submit"
+            style="width: 80px"
+          >
             <!-- [disabled]="!loginForm.valid" -->
             Submit
           </button>
           <button class="btn btn-outline-secondary mr-3" type="button">
             Test Data
           </button>
-          <button class="btn btn-outline-danger" type="button" (click)="resetForm()">
+          <button
+            class="btn btn-outline-danger"
+            type="button"
+            (click)="resetForm()"
+          >
             Reset
           </button>
         </div>
